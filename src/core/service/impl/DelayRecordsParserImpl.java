@@ -11,16 +11,20 @@ public class DelayRecordsParserImpl implements RecordsParser<DelayRecord> {
     private static final int INDEX_OF_ANSWER_TYPE = 3;
     private static final int INDEX_OF_DATES = 4;
     private static final int INDEX_OF_DELAY = 5;
+    private static final String DATE_PATTERN = "dd.MM.yyyy";
+    private static final String PART_OF_RECORD_SPLITERATOR = " ";
+    private static final String SUB_TYPE_SPLITERATOR = "\\.";
+    private static final String CHAR_OF_NEW_QUESTION = "N";
 
 
 
     @Override
     public DelayRecord parse(String line) {
-        String[] splitLine = line.split(" ");
-        String[] splitService = splitLine[INDEX_OF_SERVICE].split("\\.");
-        String[] splitType = splitLine[INDEX_OF_TYPE].split("\\.");
+        String[] splitLine = line.split(PART_OF_RECORD_SPLITERATOR);
+        String[] splitService = splitLine[INDEX_OF_SERVICE].split(SUB_TYPE_SPLITERATOR);
+        String[] splitType = splitLine[INDEX_OF_TYPE].split(SUB_TYPE_SPLITERATOR);
 
-        int answerType = splitLine[INDEX_OF_ANSWER_TYPE].equals("N") ? 0 : 1;
+        int answerType = splitLine[INDEX_OF_ANSWER_TYPE].equals(CHAR_OF_NEW_QUESTION) ? 0 : 1;
         int serviceId = Integer.parseInt(splitService[0]);
         int typeId = Integer.parseInt(splitType[0]);
 
@@ -38,7 +42,7 @@ public class DelayRecordsParserImpl implements RecordsParser<DelayRecord> {
             }
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         LocalDate date = LocalDate.parse(splitLine[INDEX_OF_DATES], formatter);
 
         int delay = Integer.parseInt(splitLine[INDEX_OF_DELAY]);
